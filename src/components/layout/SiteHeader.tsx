@@ -61,7 +61,7 @@ export function SiteHeader(): React.JSX.Element {
         {/* Mobile Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-12 w-12">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
@@ -70,24 +70,24 @@ export function SiteHeader(): React.JSX.Element {
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
-            <div className="mt-8 flex flex-col space-y-4">
+            <div className="mt-8 p-4 flex flex-col space-y-4">
               {navigationLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-sm font-medium transition-colors hover:text-primary"
+                  className="block py-3 text-sm font-medium transition-colors hover:text-primary"
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="mt-4 flex flex-col space-y-2 border-t pt-4">
-                <Button variant="ghost" asChild>
+              <div className="mt-4 flex flex-col space-y-4 border-t pt-4">
+                <Button variant="ghost" asChild className="h-12">
                   <Link href="/auth/signin" onClick={() => setIsOpen(false)}>
                     Sign In
                   </Link>
                 </Button>
-                <Button asChild>
+                <Button asChild className="h-12">
                   <Link href="/auth/signup" onClick={() => setIsOpen(false)}>
                     Get Started
                   </Link>
