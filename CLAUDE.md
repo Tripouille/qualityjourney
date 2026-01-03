@@ -82,7 +82,196 @@ QualityJourney.dev is the reference platform for Modern QA Engineers.
 
 ---
 
-## 3. TypeScript Doctrine (Strict Safety)
+## 3. UI & Styling Rules
+
+### 📱 Mobile-First Development Mandate (CRITICAL)
+
+This project follows a **strict Mobile-First approach**. All UI must be designed and functional on mobile BEFORE desktop.
+
+#### 1. CSS/Tailwind Flow
+
+**Rule:** Write base classes for mobile, then use responsive modifiers for larger screens.
+
+```tsx
+// ✅ CORRECT: Mobile-first approach
+<div className="flex flex-col gap-4 md:flex-row md:gap-6 lg:gap-8">
+  {/* Base: vertical stack with 16px gap */}
+  {/* md: horizontal row with 24px gap */}
+  {/* lg: horizontal row with 32px gap */}
+</div>
+
+// ❌ FORBIDDEN: Desktop-first with max-width breakpoints
+<div className="flex flex-row gap-8 max-md:flex-col max-md:gap-4">
+  {/* Anti-pattern: starts with desktop, then shrinks */}
+</div>
+```
+
+**Tailwind Responsive Modifiers:**
+- Base classes = Mobile (default)
+- `sm:` = 640px and up (small tablets)
+- `md:` = 768px and up (tablets)
+- `lg:` = 1024px and up (laptops)
+- `xl:` = 1280px and up (desktops)
+- `2xl:` = 1536px and up (large screens)
+
+#### 2. Touch Targets (P0 - Accessibility Critical)
+
+**Minimum Dimensions for Interactive Elements:**
+- **Minimum height/width:** `44px` (Apple HIG) / `48px` (Material Design)
+- **Tailwind equivalents:** `h-11` (44px), `h-12` (48px), `min-h-11`, `min-h-12`
+- **Minimum gap between clickable elements:** `16px` (Tailwind `gap-4`)
+
+```tsx
+// ✅ CORRECT: Proper touch targets
+<Button className="h-12 min-w-[120px]">Sign In</Button>
+<nav className="flex flex-col gap-4">
+  <Link className="block py-3">Courses</Link> {/* py-3 = 12px top + 12px bottom + text = ~44px */}
+  <Link className="block py-3">Blog</Link>
+</nav>
+
+// ❌ FORBIDDEN: Touch targets too small
+<Button className="h-8 px-2">Sign In</Button> {/* Only 32px tall */}
+<nav className="flex flex-col gap-1">
+  <Link>Courses</Link> {/* No padding, too close to next link */}
+</nav>
+```
+
+**Critical Elements Requiring Touch Target Validation:**
+- All `<Button>` components
+- All `<Link>` elements in navigation
+- Form inputs (`<Input>`, `<Select>`, `<Checkbox>`, `<Radio>`)
+- Icon-only buttons (hamburger menus, close buttons)
+- Cards with `onClick` handlers
+
+#### 3. Navigation & Interactivity
+
+**Mobile Navigation Patterns:**
+- **Complex navigation:** Use `Sheet` (drawer) component for mobile menus
+- **Filters/Search:** Use `Sheet` or `Collapsible` on mobile, inline on desktop
+- **Tabs:** Use `ScrollArea` for horizontal scroll on mobile if needed
+
+```tsx
+// ✅ CORRECT: Sheet for mobile navigation
+<Sheet>
+  <SheetTrigger asChild>
+    <Button variant="ghost" size="icon" className="h-12 w-12">
+      <Menu className="h-5 w-5" />
+    </Button>
+  </SheetTrigger>
+  <SheetContent side="right">
+    <nav className="flex flex-col gap-4">
+      {/* Touch-friendly links */}
+    </nav>
+  </SheetContent>
+</Sheet>
+
+// ❌ FORBIDDEN: Horizontal scroll without explicit design
+<div className="flex overflow-x-auto gap-2">
+  {/* Accidental horizontal scroll */}
+</div>
+```
+
+#### 4. Typography & Readability
+
+**Font Size Constraints:**
+- **Body text:** Minimum `16px` (Tailwind `text-base`)
+- **Form inputs:** Minimum `16px` to prevent iOS auto-zoom
+- **Small text:** Minimum `14px` (Tailwind `text-sm`) for secondary content only
+
+```tsx
+// ✅ CORRECT: Readable font sizes
+<input className="text-base" /> {/* 16px - prevents iOS zoom */}
+<p className="text-base">Main content</p>
+<span className="text-sm text-muted-foreground">Secondary info</span>
+
+// ❌ FORBIDDEN: Font too small
+<input className="text-sm" /> {/* 14px - triggers iOS zoom on focus */}
+<p className="text-xs">Main content</p> {/* 12px - too small */}
+```
+
+#### 5. Validation Protocol (QA)
+
+**Before submitting any UI change, verify mobile layout:**
+
+1. **Use Playwright MCP to test at mobile viewport:**
+   - iPhone 12 Pro: `390x844` (recommended baseline)
+   - iPhone SE: `375x667` (small phone test)
+   - Pixel 5: `393x851` (Android baseline)
+
+2. **Checklist for every UI component:**
+   - [ ] No horizontal overflow (check with `overflow-x: hidden` removed)
+   - [ ] All interactive elements are at least `44px` tall
+   - [ ] Gap between clickable elements is at least `16px`
+   - [ ] Form inputs are at least `16px` font size
+   - [ ] Text is readable without zooming
+   - [ ] Navigation works on mobile (Sheet/Drawer functional)
+
+3. **Playwright Verification Command:**
+```typescript
+// Resize to mobile viewport
+await page.setViewportSize({ width: 390, height: 844 });
+
+// Check for horizontal overflow
+const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
+const viewportWidth = await page.evaluate(() => window.innerWidth);
+if (bodyWidth > viewportWidth) {
+  console.error('Horizontal overflow detected!');
+}
+
+// Verify touch targets
+const buttons = await page.locator('button, a[href]').all();
+for (const button of buttons) {
+  const box = await button.boundingBox();
+  if (box && (box.height < 44 || box.width < 44)) {
+    console.warn('Touch target too small:', await button.textContent());
+  }
+}
+```
+
+#### 6. Anti-Patterns (Forbidden)
+
+```tsx
+// ❌ WRONG: Using max-width breakpoints (desktop-first)
+<div className="grid grid-cols-3 max-md:grid-cols-1">
+
+// ✅ CORRECT: Using min-width breakpoints (mobile-first)
+<div className="grid grid-cols-1 md:grid-cols-3">
+
+// ❌ WRONG: Hidden on mobile without alternative
+<nav className="hidden md:flex">
+  {/* Mobile users can't navigate! */}
+</nav>
+
+// ✅ CORRECT: Mobile menu alternative
+<nav className="hidden md:flex">
+  {/* Desktop navigation */}
+</nav>
+<Sheet>{/* Mobile navigation */}</Sheet>
+
+// ❌ WRONG: Fixed widths that don't scale
+<div className="w-[600px]">
+
+// ✅ CORRECT: Responsive widths
+<div className="w-full md:w-[600px] md:max-w-2xl">
+```
+
+#### 7. Enforcement
+
+**All future features must follow this mandate:**
+- Courses catalog page
+- Blog listing/detail pages
+- User profile page
+- Quiz runner interface
+- Certificate display
+- Progress dashboard
+
+**Code Review Gate:**
+- No PR approval without mobile-first verification
+- Use Playwright MCP to demonstrate mobile layout in PR description
+
+---
+
+## 4. TypeScript Doctrine (Strict Safety)
 
 ### Compiler Configuration
 
