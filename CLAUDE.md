@@ -1,7 +1,7 @@
 # QualityJourney.dev - Architecture & Technical Documentation
 
 **Last Updated:** 2026-01-03
-**Status:** Foundation Setup Phase
+**Status:** Content Implementation Phase
 
 ---
 
@@ -271,7 +271,491 @@ for (const button of buttons) {
 
 ---
 
-## 4. TypeScript Doctrine (Strict Safety)
+## 4. Educational Content Architecture (Course & Quiz Philosophy)
+
+### Content Principles
+
+QualityJourney.dev is built on the philosophy of **mastery through deliberate practice**. Courses are not just information dumps; they are learning journeys designed to create competent, confident QA engineers.
+
+### The "Exhaustive & Satisfying" Rule
+
+#### 1. Quiz Comprehensiveness (No Arbitrary Limits)
+
+**Rule:** Quizzes must be exhaustive, not superficial.
+
+```
+❌ FORBIDDEN:
+- "Let's add 5 questions to check understanding"
+- Limiting questions to keep quizzes "quick"
+- Skipping edge cases or nuanced concepts
+
+✅ REQUIRED:
+- Every ISTQB Learning Objective gets a question
+- Every keyword in the syllabus is tested
+- If a section has 20 key concepts, create 20 questions
+- Questions target both recall (K1) and comprehension (K2/K3)
+```
+
+**Why:**
+- **ISTQB Alignment:** The ISTQB exam tests exhaustively. Our quizzes must prepare users for that reality.
+- **Mastery Over Speed:** Users who want to skip can skip. Users who want mastery need comprehensive practice.
+- **Deliberate Practice:** Spaced repetition and exhaustive testing is proven to improve retention.
+
+#### 2. Satisfying Feedback & Celebration
+
+**Rule:** Quiz completion is a milestone worthy of celebration.
+
+**Technical Implementation:**
+- **Confetti Explosion:** Use `canvas-confetti` library to trigger visual celebration when a user passes a quiz.
+- **Detailed Explanations:** Every answer (correct or incorrect) includes a detailed explanation of why it's right/wrong.
+- **Progress Reinforcement:** Show score, time spent, and percentage of course completed.
+
+**Example Celebration Flow:**
+```typescript
+// On quiz pass (score >= 70%)
+import confetti from 'canvas-confetti';
+
+confetti({
+  particleCount: 150,
+  spread: 70,
+  origin: { y: 0.6 },
+  colors: ['#10b981', '#3b82f6', '#8b5cf6'], // Green, blue, purple
+});
+```
+
+**Why:**
+- **Dopamine Trigger:** Positive reinforcement improves motivation and retention.
+- **Milestone Recognition:** Passing a quiz is an achievement, not just a checkbox.
+- **Modern UX:** Gamification is not frivolous—it's psychology-backed design.
+
+#### 3. Content Structure: Strictly No Video (CRITICAL)
+
+**Philosophy:** All pedagogical value is delivered via **structured text, interactive components, and exhaustive quizzes**. Video content is **explicitly forbidden** to maintain quality control and focus.
+
+**Why No Video:**
+- **Quality Control:** Written content can be revised, fact-checked, and maintained easily.
+- **Accessibility:** Text is universally accessible, translatable, and searchable.
+- **Engagement:** Interactive exercises provide more engagement than passive video watching.
+- **Cost:** Video production/hosting adds complexity without proven pedagogical benefit for certification prep.
+- **Speed:** Users can read at their own pace, skip, or revisit content instantly.
+
+**Lesson Types (Final):**
+1. **Article:** Rich text content with interactive blocks (Mermaid diagrams, interactive scenarios).
+2. **Quiz:** Interactive assessment tied to learning objectives.
+3. **Exercise:** Hands-on practice (drag-and-drop, scenario simulation, code exercises).
+
+**Interactive Content Blocks:**
+```tsx
+// Definition Block (for ISTQB keywords)
+<Definition term="Test Objective">
+  A reason or purpose for designing and executing a test.
+</Definition>
+
+// Info Box (for important notes)
+<InfoBox type="warning">
+  Testing cannot prove the absence of defects—only their presence.
+</InfoBox>
+
+// Code Example (for test code snippets)
+<CodeExample language="typescript">
+  const result = testFunction();
+  expect(result).toBe(expected);
+</CodeExample>
+
+// Mermaid Diagram (for visual explanations)
+<MermaidDiagram>
+  graph LR
+    A[Error] --> B[Defect]
+    B --> C[Failure]
+</MermaidDiagram>
+
+// Interactive Scenario (for applied learning)
+<Scenario type="drag-drop">
+  Classify the following as Error, Defect, or Failure:
+  - Programmer writes incorrect logic → [Error]
+  - Bug exists in compiled code → [Defect]
+  - System crashes during execution → [Failure]
+</Scenario>
+```
+
+**"Juice" Techniques (Gamification Without Video):**
+- **Confetti Animations:** Visual celebration on quiz completion (already implemented).
+- **Progress Sounds:** Optional subtle audio cues for progress milestones.
+- **Lottie Animations:** Lightweight animations for success states, transitions.
+- **Smooth Transitions:** Framer Motion for page transitions and micro-interactions.
+- **Progress Visualization:** Animated progress bars, completion rings, streak counters.
+- **Typography Excellence:** Beautiful reading experience with proper hierarchy (Tailwind Typography plugin).
+
+**Focus on Reading Experience:**
+- **Distraction-Free:** No sidebars, ads, or unrelated content during lessons.
+- **Typography:** Large, readable fonts (18px+ body text for articles).
+- **Whitespace:** Generous spacing for comfort.
+- **Dark Mode:** Optional for reduced eye strain.
+- **Highlighting:** Allow users to highlight and annotate text.
+
+#### 4. Question Quality Standards
+
+**Anatomy of a Good Question:**
+```typescript
+{
+  id: 'q-1-1-1',
+  type: 'single-choice',
+  question: 'Which of the following is a typical test objective?',
+  options: [
+    {
+      id: 'a',
+      text: 'Evaluating work products such as requirements and code',
+      isCorrect: true,
+    },
+    {
+      id: 'b',
+      text: 'Ensuring the project stays within budget',
+      isCorrect: false,
+    },
+    {
+      id: 'c',
+      text: 'Writing user stories for the development team',
+      isCorrect: false,
+    },
+    {
+      id: 'd',
+      text: 'Deploying code to production servers',
+      isCorrect: false,
+    },
+  ],
+  explanation: {
+    correct: 'Evaluating work products is explicitly listed as a test objective in the ISTQB syllabus (section 1.1.1).',
+    incorrect: {
+      b: 'Budget management is a project management concern, not a test objective.',
+      c: 'Writing user stories is a requirement gathering activity, not testing.',
+      d: 'Deployment is a release management activity, not a test objective.',
+    },
+  },
+  learningObjective: 'FL-1.1.1 (K1) Identify typical test objectives',
+  difficulty: 'easy',
+}
+```
+
+**Rules:**
+- All options must be plausible (no joke answers).
+- Distractors (wrong answers) must target common misconceptions.
+- Explanations must reference the ISTQB syllabus section.
+- Use ISTQB terminology exactly (e.g., "test object" not "thing being tested").
+
+#### 5. Mobile-First Quiz UX
+
+**Critical Requirements:**
+- **Touch-Friendly Radio Buttons:** Minimum `44px` tap target.
+- **Sticky Progress Bar:** Always visible on mobile during quiz.
+- **One Question Per Screen:** No scrolling to see all options.
+- **Clear Feedback:** Immediate visual feedback on answer selection (green/red).
+
+**Example Mobile Layout:**
+```tsx
+<div className="flex flex-col gap-6">
+  {/* Sticky progress */}
+  <div className="sticky top-0 bg-background z-10 pb-4">
+    <Progress value={(currentIndex / totalQuestions) * 100} />
+    <p className="text-sm text-muted-foreground mt-2">
+      Question {currentIndex + 1} of {totalQuestions}
+    </p>
+  </div>
+
+  {/* Question */}
+  <h2 className="text-lg font-semibold">{question.question}</h2>
+
+  {/* Options (touch-friendly) */}
+  <div className="flex flex-col gap-3">
+    {options.map(option => (
+      <label className="flex items-center gap-3 p-4 border rounded-lg min-h-11">
+        <input type="radio" className="h-5 w-5" />
+        <span className="text-base">{option.text}</span>
+      </label>
+    ))}
+  </div>
+</div>
+```
+
+---
+
+## 5. Pedagogical Structure for ISTQB Tracks (CRITICAL)
+
+### The Learning Journey: Study → Validate → Celebrate → Progress
+
+**Philosophy:** Users don't just consume content—they master it through a structured journey with clear milestones.
+
+### Pedagogical Flow (Mandatory)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Learning Journey                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  1. LEARNING PHASE (LessonView)                             │
+│     - Structured text (18px+ typography)                     │
+│     - Definition blocks for keywords                         │
+│     - Mermaid diagrams for processes                         │
+│     - InfoBoxes for important notes                          │
+│     - "Start Quiz" button at end                             │
+│                                                              │
+│  2. VALIDATION PHASE (QuizView)                              │
+│     - Exhaustive quiz (all learning objectives)              │
+│     - Detailed explanations for every answer                 │
+│     - Real-time timer                                        │
+│     - Requires 100% score to pass                            │
+│                                                              │
+│  3. CELEBRATION (Confetti Animation)                         │
+│     - Visual celebration on quiz pass                        │
+│     - "Continue to Next Section" button                      │
+│                                                              │
+│  4. PROGRESS MILESTONE                                       │
+│     - Section marked as completed (✅)                        │
+│     - Global progress bar updated                            │
+│     - Next section unlocked                                  │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Atomic Unit: Section
+
+**Definition:** Each ISTQB Section (e.g., 1.1, 1.2) is an atomic learning unit containing:
+
+1. **Lesson Content** - Pedagogical text derived from the ISTQB syllabus
+2. **Exhaustive Quiz** - Questions covering ALL learning objectives in that section
+3. **Completion State** - Tracked per user (requires 100% quiz score)
+
+**Structure:**
+```typescript
+interface Section {
+  id: string;                    // e.g., "1.1"
+  title: string;                 // e.g., "What is Testing?"
+  learningObjectives: LearningObjective[];
+  content: ContentBlock[];       // Lesson text (Markdown, Definitions, Diagrams)
+  quizId: string;               // Reference to the quiz
+  estimatedDuration: number;     // Reading time in minutes
+  order: number;
+}
+
+interface LearningObjective {
+  id: string;                    // e.g., "FL-1.1.1"
+  cognitiveLevel: 'K1' | 'K2' | 'K3';
+  description: string;           // e.g., "Identify typical test objectives"
+}
+
+interface ContentBlock {
+  type: 'markdown' | 'definition' | 'infobox' | 'mermaid' | 'code';
+  content: string;
+  metadata?: Record<string, unknown>;
+}
+```
+
+### Milestone Rule (100% Pass Requirement)
+
+**Rule:** A section is ONLY marked as "Completed" (✅) when the user passes the quiz with **100% score**.
+
+**Why 100%?**
+- ISTQB certification requires deep knowledge, not superficial understanding
+- Users can retake quizzes unlimited times
+- Detailed explanations after each question enable learning from mistakes
+- This ensures mastery before moving to the next section
+
+**User Flow:**
+1. User reads lesson content
+2. User clicks "Start Quiz"
+3. User answers all questions
+4. If score < 100%: Show mistakes, explanations, "Retake Quiz" button
+5. If score = 100%: Confetti celebration, mark section complete, unlock next
+
+### Progress Visualization
+
+**Navigation Sidebar:**
+```tsx
+<nav className="flex flex-col gap-2">
+  {sections.map(section => (
+    <SectionNavItem
+      icon={section.isCompleted ? CheckCircle : section.isCurrent ? PlayCircle : Circle}
+      title={section.title}
+      progress={section.progress}
+      isLocked={!section.isUnlocked}
+    />
+  ))}
+</nav>
+```
+
+**Visual Indicators:**
+- `Circle` (○): Not started / Locked
+- `PlayCircle` (▶): Current section
+- `CheckCircle` (✓): Completed (100% quiz pass)
+
+**Global Progress Bar:**
+```tsx
+<Progress
+  value={(completedSections / totalSections) * 100}
+  className="h-2"
+/>
+```
+
+---
+
+## 6. ISTQB Terminology & Domain Model
+
+### Official Terminology (Mandatory)
+
+**Hierarchy:**
+1. **Chapter:** Top-level organizational unit (e.g., "Chapter 1: Fundamentals of Testing")
+2. **Section:** Second level (e.g., "1.1 What is Testing?", "1.2 Why is Testing Necessary?")
+3. **Sub-section:** Third level (e.g., "1.1.1 Test Objectives", "1.1.2 Testing and Debugging")
+4. **Learning Objective (LO):** Specific goal assigned to a sub-section (e.g., "FL-1.1.1")
+
+**Example Mapping:**
+```
+Chapter 1: Fundamentals of Testing
+├─ Section 1.1: What is Testing?
+│  ├─ Sub-section 1.1.1: Test Objectives
+│  │  └─ Learning Objective: FL-1.1.1 (K1) Identify typical test objectives
+│  └─ Sub-section 1.1.2: Testing and Debugging
+│     └─ Learning Objective: FL-1.1.2 (K2) Differentiate testing from debugging
+├─ Section 1.2: Why is Testing Necessary?
+│  ├─ Sub-section 1.2.1: Testing's Contributions to Success
+│  │  └─ Learning Objective: FL-1.2.1 (K2) Exemplify why testing is necessary
+```
+
+**Usage in Code:**
+- Use "Section" for the atomic learning unit (e.g., Section 1.1)
+- Use "LearningObjective" for the specific goal within a sub-section
+- Use "Chapter" only for organizational grouping
+
+---
+
+## 7. K-Level Badge System (Cognitive Levels)
+
+### ISTQB Cognitive Levels
+
+The ISTQB syllabus uses **Bloom's Taxonomy** to define the depth of knowledge required for each learning objective.
+
+**K1 - Remember:**
+- **Capability:** Recognize, remember, or recall a keyword or concept
+- **Exam Questions:** Multiple-choice asking for definitions or recognition
+- **Example:** "What is a test objective?" → Recall definition
+
+**K2 - Understand:**
+- **Capability:** Differentiate, summarize, exemplify, or classify concepts
+- **Exam Questions:** Scenario-based questions requiring comprehension
+- **Example:** "Which of the following is NOT a test objective?" → Differentiate
+
+**K3 - Apply:**
+- **Capability:** Apply knowledge to a specific context or problem
+- **Exam Questions:** Practical scenarios requiring application
+- **Example:** "Given this requirement, identify the appropriate test design technique"
+
+### UI Implementation
+
+**K-Level Badge Component:**
+```tsx
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+interface KLevelBadgeProps {
+  level: 'K1' | 'K2' | 'K3';
+}
+
+export function KLevelBadge({ level }: KLevelBadgeProps) {
+  const config = {
+    K1: {
+      label: 'K1',
+      description: 'Remember: You need to recall definitions and keywords for the exam.',
+      color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+    },
+    K2: {
+      label: 'K2',
+      description: 'Understand: You need to differentiate and explain concepts for the exam.',
+      color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+    },
+    K3: {
+      label: 'K3',
+      description: 'Apply: You need to solve practical problems for the exam.',
+      color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+    },
+  };
+
+  const { label, description, color } = config[level];
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Badge variant="outline" className={color}>
+            {label}
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-sm">{description}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+```
+
+**Lesson Header Example:**
+```tsx
+<header className="mb-8">
+  <div className="flex items-center gap-2 mb-2">
+    <span className="text-sm text-muted-foreground">FL-1.1.1</span>
+    <KLevelBadge level="K1" />
+  </div>
+  <h1 className="text-2xl font-bold md:text-3xl">
+    Identify Typical Test Objectives
+  </h1>
+</header>
+```
+
+### Quiz Question K-Level Alignment
+
+**Rule:** Quiz questions MUST align with the K-Level of the learning objective.
+
+**K1 Questions (Remember):**
+```typescript
+{
+  question: "What is a test objective?",
+  options: [
+    "A reason or purpose for designing and executing a test",
+    "A document describing test cases",
+    "A tool for automated testing",
+    "A metric for measuring test coverage"
+  ]
+}
+```
+
+**K2 Questions (Understand):**
+```typescript
+{
+  question: "Which of the following differentiates testing from debugging?",
+  options: [
+    "Testing finds defects; debugging finds causes and fixes them",
+    "Testing is done by developers; debugging by testers",
+    "Testing is automated; debugging is manual",
+    "Testing happens before deployment; debugging after"
+  ]
+}
+```
+
+**K3 Questions (Apply):**
+```typescript
+{
+  question: "Given a project with strict regulatory requirements, which test objective is MOST critical?",
+  options: [
+    "Verifying compliance with legal and regulatory requirements",
+    "Reducing development costs",
+    "Improving team velocity",
+    "Automating all test cases"
+  ]
+}
+```
+
+---
+
+## 8. TypeScript Doctrine (Strict Safety)
 
 ### Compiler Configuration
 
@@ -922,21 +1406,68 @@ Before committing any code, verify:
 - [ ] TypeScript strictest mode passes with zero errors
 - [ ] File/folder naming follows conventions
 - [ ] No business logic in components (use services)
+- [ ] No Windows CMD commands in bash (use Unix commands only)
+- [ ] No redirects to `nul` (use `/dev/null` instead)
 
 ---
 
-## 12. Critical Rules Summary
+## 12. Shell Commands & Environment
+
+### Bash Command Rules (CRITICAL)
+
+**Context:** This project runs in a bash environment (Git Bash on Windows or native bash on Unix).
+
+**Rule:** NEVER mix Windows CMD commands with bash syntax.
+
+```bash
+# ❌ FORBIDDEN: Windows CMD commands in bash
+del /F /Q file.txt
+taskkill /F /PID 1234
+dir /B
+
+# ❌ FORBIDDEN: Redirecting to 'nul' (creates a file named 'nul')
+command 2>nul
+command >nul 2>&1
+
+# ✅ CORRECT: Use bash/Unix commands
+rm -f file.txt
+kill -9 1234
+ls
+
+# ✅ CORRECT: Redirect to /dev/null
+command 2>/dev/null
+command >/dev/null 2>&1
+```
+
+**Why This Matters:**
+- `nul` is a Windows CMD device, not recognized in bash
+- Using `2>nul` in bash creates an actual file named `nul` in the project root
+- This pollutes the repository and causes confusion
+
+**Approved Commands:**
+- File operations: `rm`, `mv`, `cp`, `mkdir`, `touch`, `ls`
+- Text processing: `cat`, `grep`, `sed`, `awk`, `head`, `tail`
+- Process management: `kill`, `ps`, `pkill`
+- Package manager: `pnpm` (cross-platform)
+- Git: `git` (cross-platform)
+- Next.js: `pnpm dev`, `pnpm build`, `pnpm start`
+
+---
+
+## 13. Critical Rules Summary
 
 1. **NEVER** use `as` type assertions. Use type guards or Zod.
 2. **ALWAYS** validate external data with Zod.
 3. **NEVER** import from `infrastructure/` in `domain/`.
 4. **ALWAYS** use Repository interfaces, never concrete implementations in business logic.
 5. **NEVER** put business logic in React components. Use domain services.
-6. **ALWAYS** update this CLAUDE.md when making architectural decisions.
+6. **NEVER** mix Windows CMD commands with bash. Use Unix commands only.
+7. **NEVER** redirect to `nul` (use `/dev/null` instead).
+8. **ALWAYS** update this CLAUDE.md when making architectural decisions.
 
 ---
 
-## 13. Current Status
+## 14. Current Status
 
 ### ✅ Completed (Foundation Phase)
 

@@ -15,13 +15,21 @@ export interface CourseModule {
   duration: number; // in minutes
 }
 
+/**
+ * Lesson Type
+ *
+ * CRITICAL: Video content is explicitly forbidden (see CLAUDE.md Section 4.3)
+ * All pedagogical value delivered via text, interactive components, and quizzes
+ */
+export type LessonType = 'article' | 'quiz' | 'exercise';
+
 export interface Lesson {
   id: string;
   title: string;
-  type: 'video' | 'article' | 'quiz' | 'exercise';
-  duration: number; // in minutes
+  type: LessonType;
+  duration: number; // in minutes (estimated reading/interaction time)
   order: number;
-  content: string; // URL or content identifier
+  content: string; // Content identifier (e.g., markdown file path, quiz ID)
   isCompleted?: boolean; // User-specific state
 }
 
