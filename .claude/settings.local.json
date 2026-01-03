@@ -10,7 +10,8 @@
       "mcp__playwright",
       "Bash(pnpm build:*)",
       "Bash(cat:*)",
-      "Bash(npx next@latest info:*)"
+      "Bash(npx next@latest info:*)",
+      "Bash(timeout /t 5 /nobreak)"
     ]
   }
 }
