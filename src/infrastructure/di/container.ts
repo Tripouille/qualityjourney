@@ -8,9 +8,9 @@
  */
 
 import { CourseRepository } from '@/domain/repositories/course-repository';
-import { UserRepository } from '@/domain/repositories/user-repository';
-import { CertificateRepository } from '@/domain/repositories/certificate-repository';
-import { ProgressRepository } from '@/domain/repositories/progress-repository';
+// import { UserRepository } from '@/domain/repositories/user-repository';
+// import { CertificateRepository } from '@/domain/repositories/certificate-repository';
+// import { ProgressRepository } from '@/domain/repositories/progress-repository';
 
 import { CourseRepositoryInMemory } from '@/infrastructure/repositories/in-memory/course-repository-in-memory';
 // import { UserRepositoryInMemory } from '@/infrastructure/repositories/in-memory/user-repository-in-memory';

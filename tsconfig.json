@@ -1,5 +1,7 @@
 {
+  "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
+    // Next.js specific overrides (required for Next.js compatibility)
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -20,7 +22,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    // Compatibility overrides
+    "verbatimModuleSyntax": false
   },
   "include": [
     "next-env.d.ts",

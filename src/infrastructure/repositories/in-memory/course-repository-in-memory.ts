@@ -85,8 +85,9 @@ export class CourseRepositoryInMemory implements CourseRepository {
       throw new Error(`Course with id ${id} not found`);
     }
 
+    // Non-null assertion safe here because we verified index exists
     const updated: Course = {
-      ...this.courses[index],
+      ...this.courses[index]!,
       ...data,
       updatedAt: new Date(),
     };

@@ -85,15 +85,48 @@ QualityJourney.dev is the reference platform for Modern QA Engineers.
 ## 3. TypeScript Doctrine (Strict Safety)
 
 ### Compiler Configuration
-All strict options are enabled in `tsconfig.json`:
-- `strict: true`
-- `noImplicitAny: true`
-- `strictNullChecks: true`
-- `strictFunctionTypes: true`
-- `strictBindCallApply: true`
-- `strictPropertyInitialization: true`
-- `noImplicitThis: true`
-- `alwaysStrict: true`
+
+We use **`@tsconfig/strictest`** to enforce maximum type safety without manually maintaining flags.
+
+**Package:** `@tsconfig/strictest@2.0.8`
+
+This enables all strict options plus additional safety checks:
+- `strict: true` (all strict family flags)
+- `noUncheckedIndexedAccess: true` - Array/object access requires undefined checks
+- `noImplicitOverride: true` - Explicit override keyword required
+- `noPropertyAccessFromIndexSignature: true` - Forces bracket notation for index signatures
+- `exactOptionalPropertyTypes: true` - Distinguishes `undefined` from absent properties
+- And many more safety checks
+
+**Critical Implication: `noUncheckedIndexedAccess`**
+
+Array and object indexed access always returns `T | undefined`:
+
+```typescript
+// ❌ FORBIDDEN: Direct array access without check
+const course = courses[0];
+course.title; // TypeScript error: 'course' is possibly 'undefined'
+
+// ✅ PATTERN 1: Non-null assertion after index validation
+const index = courses.findIndex(c => c.id === id);
+if (index === -1) {
+  throw new Error('Not found');
+}
+const course = courses[index]!; // Safe: we verified index exists
+
+// ✅ PATTERN 2: Use .find() instead of indexed access
+const course = courses.find(c => c.id === id);
+if (!course) {
+  throw new Error('Not found');
+}
+// course is now Course (not undefined)
+
+// ✅ PATTERN 3: Check after access
+const course = courses[0];
+if (course) {
+  course.title; // Safe
+}
+```
 
 ### Type Safety Rules (Zero Tolerance)
 
@@ -694,9 +727,10 @@ The UI components remain unchanged because they only depend on the hook interfac
 Before committing any code, verify:
 - [ ] No `as` type assertions used
 - [ ] All external data validated with Zod
+- [ ] Array/object indexed access checked for undefined (`noUncheckedIndexedAccess`)
 - [ ] Repository pattern respected (no direct data access in components)
 - [ ] Dependency flow is correct (domain → infrastructure)
-- [ ] TypeScript strict mode passes with zero errors
+- [ ] TypeScript strictest mode passes with zero errors
 - [ ] File/folder naming follows conventions
 - [ ] No business logic in components (use services)
 
@@ -719,7 +753,7 @@ Before committing any code, verify:
 
 **Technical Setup:**
 - [x] Next.js 16 setup with App Router
-- [x] TypeScript strict mode enabled and verified (0 errors)
+- [x] TypeScript strictest mode enabled (@tsconfig/strictest) - 0 errors
 - [x] Tailwind CSS v4 configured
 - [x] Shadcn/ui initialized (new-york style)
 - [x] Dependencies installed: Zod, Zustand, TanStack Query, Lucide React
