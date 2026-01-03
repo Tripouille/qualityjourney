@@ -5,7 +5,9 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm dlx:*)",
       "Bash(pnpm tsc:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(pnpm dev)",
+      "mcp__playwright"
     ]
   }
 }
