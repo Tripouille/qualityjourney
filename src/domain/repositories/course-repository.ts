@@ -1,4 +1,4 @@
-import { Course, CourseSummary, CourseLevel } from '@/domain/entities/course';
+import type { Course, CourseSummary, CourseLevel } from '@/domain/entities/course';
 
 /**
  * Course Repository Interface

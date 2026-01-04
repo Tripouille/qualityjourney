@@ -3,8 +3,8 @@
  * Uses mock data - will be replaced by Drizzle implementation later
  */
 
-import { QuizRepository } from '@/domain/repositories/quiz-repository';
-import { Quiz, QuizAttempt } from '@/domain/entities/quiz';
+import type { QuizRepository } from '@/domain/repositories/quiz-repository';
+import type { Quiz, QuizAttempt } from '@/domain/entities/quiz';
 import { CHAPTER_1_QUIZZES } from './data/istqb-chapter1-quizzes';
 
 export class QuizRepositoryInMemory implements QuizRepository {
@@ -12,16 +12,19 @@ export class QuizRepositoryInMemory implements QuizRepository {
   private attempts: QuizAttempt[] = [];
 
   async findById(id: string): Promise<Quiz | null> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     const quiz = this.quizzes.find((q) => q.id === id);
     return quiz ?? null;
   }
 
   async findByLessonId(lessonId: string): Promise<Quiz | null> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     const quiz = this.quizzes.find((q) => q.lessonId === lessonId);
     return quiz ?? null;
   }
 
   async create(quiz: Omit<Quiz, 'id' | 'createdAt' | 'updatedAt'>): Promise<Quiz> {
+    await Promise.resolve(); // Simulate async operation (future: DB insert)
     const newQuiz: Quiz = {
       ...quiz,
       id: `quiz-${this.quizzes.length + 1}`,
@@ -34,14 +37,19 @@ export class QuizRepositoryInMemory implements QuizRepository {
   }
 
   async update(id: string, data: Partial<Quiz>): Promise<Quiz> {
+    await Promise.resolve(); // Simulate async operation (future: DB update)
     const index = this.quizzes.findIndex((q) => q.id === id);
     if (index === -1) {
       throw new Error(`Quiz with id ${id} not found`);
     }
 
-    // Non-null assertion safe here because we verified index exists
+    const existingQuiz = this.quizzes[index];
+    if (existingQuiz === undefined) {
+      throw new Error(`Quiz with id ${id} not found in array`);
+    }
+
     const updated: Quiz = {
-      ...this.quizzes[index]!,
+      ...existingQuiz,
       ...data,
       updatedAt: new Date(),
     };
@@ -51,6 +59,7 @@ export class QuizRepositoryInMemory implements QuizRepository {
   }
 
   async delete(id: string): Promise<void> {
+    await Promise.resolve(); // Simulate async operation (future: DB delete)
     const index = this.quizzes.findIndex((q) => q.id === id);
     if (index === -1) {
       throw new Error(`Quiz with id ${id} not found`);
@@ -60,6 +69,7 @@ export class QuizRepositoryInMemory implements QuizRepository {
   }
 
   async saveAttempt(attempt: Omit<QuizAttempt, 'id'>): Promise<QuizAttempt> {
+    await Promise.resolve(); // Simulate async operation (future: DB insert)
     const newAttempt: QuizAttempt = {
       ...attempt,
       id: `attempt-${this.attempts.length + 1}`,
@@ -70,9 +80,10 @@ export class QuizRepositoryInMemory implements QuizRepository {
   }
 
   async getAttemptsByUser(userId: string, quizId?: string): Promise<QuizAttempt[]> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     let filtered = this.attempts.filter((a) => a.userId === userId);
 
-    if (quizId) {
+    if (quizId !== undefined && quizId !== '') {
       filtered = filtered.filter((a) => a.quizId === quizId);
     }
 

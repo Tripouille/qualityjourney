@@ -7,14 +7,14 @@
  * Pattern: Singleton
  */
 
-import { CourseRepository } from '@/domain/repositories/course-repository';
-import { QuizRepository } from '@/domain/repositories/quiz-repository';
+import type { CourseRepository } from "@/domain/repositories/course-repository";
+import type { QuizRepository } from "@/domain/repositories/quiz-repository";
 // import { UserRepository } from '@/domain/repositories/user-repository';
 // import { CertificateRepository } from '@/domain/repositories/certificate-repository';
 // import { ProgressRepository } from '@/domain/repositories/progress-repository';
 
-import { CourseRepositoryInMemory } from '@/infrastructure/repositories/in-memory/course-repository-in-memory';
-import { QuizRepositoryInMemory } from '@/infrastructure/repositories/in-memory/quiz-repository-in-memory';
+import { CourseRepositoryInMemory } from "@/infrastructure/repositories/in-memory/course-repository-in-memory";
+import { QuizRepositoryInMemory } from "@/infrastructure/repositories/in-memory/quiz-repository-in-memory";
 // import { UserRepositoryInMemory } from '@/infrastructure/repositories/in-memory/user-repository-in-memory';
 // import { CertificateRepositoryInMemory } from '@/infrastructure/repositories/in-memory/certificate-repository-in-memory';
 // import { ProgressRepositoryInMemory } from '@/infrastructure/repositories/in-memory/progress-repository-in-memory';
@@ -50,9 +50,9 @@ class DependencyContainer {
   }
 
   public static getInstance(): DependencyContainer {
-    if (!DependencyContainer.instance) {
-      DependencyContainer.instance = new DependencyContainer();
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    DependencyContainer.instance ??= new DependencyContainer();
+
     return DependencyContainer.instance;
   }
 

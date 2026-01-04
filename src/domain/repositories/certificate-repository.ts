@@ -1,4 +1,4 @@
-import { Certificate } from '@/domain/entities/certificate';
+import type { Certificate } from '@/domain/entities/certificate';
 
 /**
  * Certificate Repository Interface

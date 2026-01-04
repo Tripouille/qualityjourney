@@ -3,7 +3,7 @@
  * Defines contract for quiz data access
  */
 
-import { Quiz, QuizAttempt } from '@/domain/entities/quiz';
+import type { Quiz, QuizAttempt } from '@/domain/entities/quiz';
 
 export interface QuizRepository {
   /**

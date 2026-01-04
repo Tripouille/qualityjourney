@@ -64,7 +64,7 @@ export const useQuizRunnerStore = create<QuizRunnerState>((set) => ({
             [questionId]: newAnswers,
           },
         };
-      } else {
+      } 
         // Single choice: replace array with single option
         return {
           selectedAnswers: {
@@ -72,7 +72,7 @@ export const useQuizRunnerStore = create<QuizRunnerState>((set) => ({
             [questionId]: [optionId],
           },
         };
-      }
+      
     });
   },
 

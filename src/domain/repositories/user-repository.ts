@@ -1,4 +1,4 @@
-import { User, UserProfile } from '@/domain/entities/user';
+import type { User, UserProfile } from '@/domain/entities/user';
 
 /**
  * User Repository Interface

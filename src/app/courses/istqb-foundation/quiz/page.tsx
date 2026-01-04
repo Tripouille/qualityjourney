@@ -4,7 +4,7 @@
  */
 
 import type { Metadata } from 'next';
-import { QuizRunner } from '@/features/courses/components/QuizRunner';
+import { QuizRunner } from '@/features/courses/components/quiz-runner';
 
 export const metadata: Metadata = {
   title: 'Chapter 1 Quiz - ISTQB Foundation - QualityJourney.dev',

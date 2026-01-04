@@ -1,5 +1,5 @@
-import { CourseRepository } from '@/domain/repositories/course-repository';
-import { Course, CourseSummary, CourseLevel } from '@/domain/entities/course';
+import type { CourseRepository } from '@/domain/repositories/course-repository';
+import type { Course, CourseSummary, CourseLevel } from '@/domain/entities/course';
 
 /**
  * Course Service
@@ -32,7 +32,7 @@ export class CourseService {
   async getCourseBySlug(slug: string): Promise<Course> {
     const course = await this.courseRepository.findBySlug(slug);
 
-    if (!course) {
+    if (course === null) {
       throw new Error(`Course with slug "${slug}" not found`);
     }
 
@@ -60,7 +60,7 @@ export class CourseService {
     const totalLessons = course.totalLessons;
     const completed = completedLessonIds.length;
 
-    if (totalLessons === 0) return 0;
+    if (totalLessons === 0) {return 0;}
 
     return Math.round((completed / totalLessons) * 100);
   }
@@ -92,11 +92,11 @@ export class CourseService {
 
     for (const course of courses) {
       const fullCourse = await this.courseRepository.findById(course.id);
-      if (fullCourse) {
+      if (fullCourse !== null) {
         fullCourse.tags.forEach((tag) => tagSet.add(tag));
       }
     }
 
-    return Array.from(tagSet).sort();
+    return [...tagSet].sort();
   }
 }

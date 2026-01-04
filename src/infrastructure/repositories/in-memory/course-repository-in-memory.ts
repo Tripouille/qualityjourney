@@ -1,5 +1,5 @@
-import { CourseRepository } from '@/domain/repositories/course-repository';
-import { Course, CourseSummary, CourseLevel } from '@/domain/entities/course';
+import type { CourseRepository } from '@/domain/repositories/course-repository';
+import type { Course, CourseSummary, CourseLevel } from '@/domain/entities/course';
 import { MOCK_COURSES } from './data/mock-courses';
 
 /**
@@ -10,6 +10,7 @@ export class CourseRepositoryInMemory implements CourseRepository {
   private courses: Course[] = MOCK_COURSES;
 
   async findAll(): Promise<CourseSummary[]> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     const publishedCourses = this.courses.filter((c) => c.status === 'published');
     return publishedCourses.map(this.toCourseSummary);
   }
@@ -19,19 +20,21 @@ export class CourseRepositoryInMemory implements CourseRepository {
     tags?: string[];
     search?: string;
   }): Promise<CourseSummary[]> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     let filtered = this.courses.filter((c) => c.status === 'published');
 
-    if (filters.level) {
+    if (filters.level !== undefined) {
       filtered = filtered.filter((c) => c.level === filters.level);
     }
 
-    if (filters.tags && filters.tags.length > 0) {
+    if (filters.tags !== undefined && filters.tags.length > 0) {
+      const filterTags = filters.tags; // Capture for type narrowing
       filtered = filtered.filter((c) =>
-        filters.tags!.some((tag) => c.tags.includes(tag))
+        filterTags.some((tag) => c.tags.includes(tag))
       );
     }
 
-    if (filters.search) {
+    if (filters.search !== undefined && filters.search !== '') {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(
         (c) =>
@@ -45,22 +48,27 @@ export class CourseRepositoryInMemory implements CourseRepository {
   }
 
   async findById(id: string): Promise<Course | null> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     const course = this.courses.find((c) => c.id === id);
     return course ?? null;
   }
 
   async findBySlug(slug: string): Promise<Course | null> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     const course = this.courses.find((c) => c.slug === slug);
     return course ?? null;
   }
 
   async findFeatured(limit = 3): Promise<CourseSummary[]> {
+    await Promise.resolve(); // Simulate async operation (future: DB query)
     const published = this.courses.filter((c) => c.status === 'published');
 
     // Sort by rating and enrollment count
     const sorted = published.sort((a, b) => {
       const ratingDiff = (b.rating ?? 0) - (a.rating ?? 0);
-      if (ratingDiff !== 0) return ratingDiff;
+      if (ratingDiff !== 0) {
+        return ratingDiff;
+      }
       return b.enrolledCount - a.enrolledCount;
     });
 
@@ -68,6 +76,7 @@ export class CourseRepositoryInMemory implements CourseRepository {
   }
 
   async create(course: Omit<Course, 'id' | 'createdAt' | 'updatedAt'>): Promise<Course> {
+    await Promise.resolve(); // Simulate async operation (future: DB insert)
     const newCourse: Course = {
       ...course,
       id: `course-${this.courses.length + 1}`,
@@ -80,14 +89,19 @@ export class CourseRepositoryInMemory implements CourseRepository {
   }
 
   async update(id: string, data: Partial<Course>): Promise<Course> {
+    await Promise.resolve(); // Simulate async operation (future: DB update)
     const index = this.courses.findIndex((c) => c.id === id);
     if (index === -1) {
       throw new Error(`Course with id ${id} not found`);
     }
 
-    // Non-null assertion safe here because we verified index exists
+    const existingCourse = this.courses[index];
+    if (existingCourse === undefined) {
+      throw new Error(`Course with id ${id} not found in array`);
+    }
+
     const updated: Course = {
-      ...this.courses[index]!,
+      ...existingCourse,
       ...data,
       updatedAt: new Date(),
     };
@@ -97,6 +111,7 @@ export class CourseRepositoryInMemory implements CourseRepository {
   }
 
   async delete(id: string): Promise<void> {
+    await Promise.resolve(); // Simulate async operation (future: DB delete)
     const index = this.courses.findIndex((c) => c.id === id);
     if (index === -1) {
       throw new Error(`Course with id ${id} not found`);

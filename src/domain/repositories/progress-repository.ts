@@ -1,4 +1,4 @@
-import { CourseProgress, ActivityDay } from '@/domain/entities/progress';
+import type { CourseProgress, ActivityDay } from '@/domain/entities/progress';
 
 /**
  * Progress Repository Interface

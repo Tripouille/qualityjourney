@@ -26,7 +26,6 @@ export function MermaidBlock({ block }: MermaidBlockProps): React.JSX.Element {
 
     const renderDiagram = async () => {
       try {
-        console.log('Starting mermaid render for:', block.id);
         setIsLoading(true);
         setError(null);
 
@@ -35,7 +34,6 @@ export function MermaidBlock({ block }: MermaidBlockProps): React.JSX.Element {
 
         // Initialize mermaid only once
         if (!mermaidInitialized) {
-          console.log('Initializing mermaid');
           mermaid.initialize({
             startOnLoad: false,
             theme: 'neutral',
@@ -50,22 +48,18 @@ export function MermaidBlock({ block }: MermaidBlockProps): React.JSX.Element {
         const sanitizedId = block.id.replace(/[^a-zA-Z0-9-_]/g, '-');
         const id = `mermaid-${sanitizedId}-${Date.now()}`;
 
-        console.log('Rendering diagram with ID:', id);
-
         // Render the diagram
         const { svg } = await mermaid.render(id, block.diagram);
-
-        console.log('Diagram rendered successfully');
 
         // Update state only if component is still mounted
         if (mounted) {
           setSvgContent(svg);
           setIsLoading(false);
         }
-      } catch (err) {
-        console.error('Mermaid rendering error:', err);
+      } catch (error_) {
+        console.error('Mermaid rendering error:', error_);
         if (mounted) {
-          const errorMessage = err instanceof Error ? err.message : 'Failed to render diagram';
+          const errorMessage = error_ instanceof Error ? error_.message : 'Failed to render diagram';
           setError(errorMessage);
           setIsLoading(false);
         }
@@ -86,7 +80,7 @@ export function MermaidBlock({ block }: MermaidBlockProps): React.JSX.Element {
   return (
     <Card>
       <CardContent className="pt-6">
-        {error ? (
+        {error !== null && error !== '' ? (
           <div className="text-destructive text-sm p-4 bg-destructive/10 rounded-md">
             <p className="font-semibold">Diagram Error</p>
             <p>{error}</p>
@@ -109,7 +103,7 @@ export function MermaidBlock({ block }: MermaidBlockProps): React.JSX.Element {
               className="flex justify-center mermaid-diagram overflow-x-auto"
               dangerouslySetInnerHTML={{ __html: svgContent }}
             />
-            {block.caption && (
+            {block.caption !== undefined && block.caption !== '' && (
               <p className="text-center text-sm text-muted-foreground italic">{block.caption}</p>
             )}
           </div>

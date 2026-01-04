@@ -1,4 +1,4 @@
-import { Course } from '@/domain/entities/course';
+import type { Course } from '@/domain/entities/course';
 
 /**
  * Mock Course Data

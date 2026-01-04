@@ -23,7 +23,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle2, XCircle, Clock, Trophy, AlertTriangle } from 'lucide-react';
-import { KLevelBadge } from '@/components/common/KLevelBadge';
+import { KLevelBadge } from '@/components/common/k-level-badge';
 
 interface QuizRunnerProps {
   quizId: string;
@@ -35,7 +35,7 @@ interface QuizRunnerProps {
  */
 function extractKLevel(learningObjective: string): 'K1' | 'K2' | 'K3' | null {
   const match = learningObjective.match(/\(K([1-3])\)/);
-  if (match?.[1]) {
+  if (match?.[1] !== undefined && match[1] !== '') {
     return `K${match[1]}` as 'K1' | 'K2' | 'K3';
   }
   return null;
@@ -63,14 +63,14 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
 
   // Initialize quiz on mount
   useEffect(() => {
-    if (quiz) {
+    if (quiz !== undefined) {
       startQuiz(quizId);
     }
   }, [quiz, quizId, startQuiz]);
 
   // Timer effect
   useEffect(() => {
-    if (!isSubmitted && quiz) {
+    if (!isSubmitted && quiz !== undefined) {
       const interval = setInterval(() => {
         incrementTime();
       }, 1000);
@@ -85,8 +85,8 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
 
   // Confetti celebration on pass
   useEffect(() => {
-    if (isSubmitted && passed) {
-      confetti({
+    if (isSubmitted && passed === true) {
+      void confetti({
         particleCount: 150,
         spread: 70,
         origin: { y: 0.6 },
@@ -95,7 +95,7 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
 
       // Second burst for extra celebration
       setTimeout(() => {
-        confetti({
+        void confetti({
           particleCount: 100,
           spread: 50,
           origin: { y: 0.7 },
@@ -134,11 +134,11 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
   const totalQuestions = quiz.questions.length;
   const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
-  const currentAnswer = currentQuestion ? selectedAnswers[currentQuestion.id] : undefined;
-  const hasAnswer = currentAnswer && currentAnswer.length > 0;
+  const currentAnswer = currentQuestion !== undefined ? selectedAnswers[currentQuestion.id] : undefined;
+  const hasAnswer = currentAnswer !== undefined && currentAnswer.length > 0;
 
   const handleAnswerSelect = (optionId: string) => {
-    if (currentQuestion && !isSubmitted) {
+    if (currentQuestion !== undefined && !isSubmitted) {
       const isMultipleChoice = currentQuestion.type === 'multiple-choice';
       selectAnswer(currentQuestion.id, optionId, isMultipleChoice);
       setShowExplanation(false);
@@ -161,14 +161,16 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
 
     for (const question of quiz.questions) {
       const userAnswer = selectedAnswers[question.id];
-      if (!userAnswer) continue;
+      if (userAnswer === undefined) {
+        continue;
+      }
 
       const correctOptionIds = question.options.filter((opt) => opt.isCorrect).map((opt) => opt.id);
 
       // Check if answer is correct
       const isCorrect =
         userAnswer.length === correctOptionIds.length &&
-        userAnswer.every((id) => correctOptionIds.includes(id));
+        userAnswer.every((id: string) => correctOptionIds.includes(id));
 
       if (isCorrect) {
         correctCount++;
@@ -198,7 +200,7 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader className="text-center">
-            {passed ? (
+            {passed === true ? (
               <div className="flex flex-col items-center gap-4">
                 <Trophy className="h-16 w-16 text-green-500" />
                 <CardTitle className="text-2xl">Congratulations!</CardTitle>
@@ -239,7 +241,7 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
           </CardContent>
         </Card>
 
-        {passed && (
+        {passed === true && (
           <Alert>
             <CheckCircle2 className="h-5 w-5 text-green-500" />
             <AlertTitle className="text-base">What&apos;s Next?</AlertTitle>
@@ -252,7 +254,7 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
     );
   }
 
-  if (!currentQuestion) {
+  if (currentQuestion === undefined) {
     return null;
   }
 
@@ -276,8 +278,8 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
       <Card>
         <CardHeader>
           <div className="flex flex-wrap gap-2 mb-4">
-            {extractKLevel(currentQuestion.learningObjective) && (
-              <KLevelBadge level={extractKLevel(currentQuestion.learningObjective)!} />
+            {extractKLevel(currentQuestion.learningObjective) !== null && (
+              <KLevelBadge level={extractKLevel(currentQuestion.learningObjective) ?? 'K1'} />
             )}
             <Badge variant="outline">{currentQuestion.difficulty}</Badge>
             <Badge variant="secondary">{currentQuestion.type}</Badge>
@@ -304,14 +306,14 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
           </RadioGroup>
 
           {/* Show Explanation Button */}
-          {hasAnswer && !showExplanation && (
+          {hasAnswer === true && !showExplanation && (
             <Button variant="outline" onClick={() => setShowExplanation(true)} className="h-12">
               Show Explanation
             </Button>
           )}
 
           {/* Explanation */}
-          {showExplanation && hasAnswer && (
+          {showExplanation && hasAnswer === true && (
             <Alert>
               <CheckCircle2 className="h-5 w-5" />
               <AlertTitle className="text-base">Explanation</AlertTitle>
@@ -349,11 +351,11 @@ export function QuizRunner({ quizId }: QuizRunnerProps) {
         </Button>
 
         {!isLastQuestion ? (
-          <Button onClick={handleNext} disabled={!hasAnswer} className="h-12 flex-1">
+          <Button onClick={handleNext} disabled={hasAnswer !== true} className="h-12 flex-1">
             Next Question
           </Button>
         ) : (
-          <Button onClick={handleSubmit} disabled={!hasAnswer} className="h-12 flex-1">
+          <Button onClick={handleSubmit} disabled={hasAnswer !== true} className="h-12 flex-1">
             Submit Quiz
           </Button>
         )}

@@ -12,12 +12,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { KLevelBadge } from '@/components/common/KLevelBadge';
-import { TextBlock } from './content-blocks/TextBlock';
-import { DefinitionBlock } from './content-blocks/DefinitionBlock';
-import { InfoBoxBlock } from './content-blocks/InfoBoxBlock';
-import { MermaidBlock } from './content-blocks/MermaidBlock';
-import { ScenarioBlock } from './content-blocks/ScenarioBlock';
+import { KLevelBadge } from '@/components/common/k-level-badge';
+import { TextBlock } from './content-blocks/text-block';
+import { DefinitionBlock } from './content-blocks/definition-block';
+import { InfoBoxBlock } from './content-blocks/info-box-block';
+import { MermaidBlock } from './content-blocks/mermaid-block';
+import { ScenarioBlock } from './content-blocks/scenario-block';
 import { ArrowRight, Target } from 'lucide-react';
 import type { Section, ContentBlock } from '@/domain/entities/section';
 

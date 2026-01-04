@@ -4,7 +4,7 @@
  */
 
 import type { Metadata } from 'next';
-import { LessonView } from '@/features/courses/components/LessonView';
+import { LessonView } from '@/features/courses/components/lesson-view';
 import { SECTION_1_1 } from '@/infrastructure/repositories/in-memory/data/istqb-chapter1-sections';
 
 export const metadata: Metadata = {

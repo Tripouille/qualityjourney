@@ -1,4 +1,4 @@
-import { Quiz } from '@/domain/entities/quiz';
+import type { Quiz } from '@/domain/entities/quiz';
 
 /**
  * ISTQB Foundation Level - Chapter 1 Quiz Data
