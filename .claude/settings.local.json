@@ -20,7 +20,9 @@
       "Skill(superpowers:writing-plans)",
       "Skill(superpowers:writing-plans:*)",
       "Bash(mkdir:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Skill(superpowers:writing-skills)",
+      "Skill(superpowers:writing-skills:*)"
     ],
     "deny": [],
     "ask": [

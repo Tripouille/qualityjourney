@@ -12,6 +12,36 @@ QualityJourney.dev is the reference platform for Modern QA Engineers.
 
 ---
 
+## Superpowers MCP (Enhanced Capabilities)
+
+You have access to advanced capabilities through the Superpowers MCP:
+
+**Research & Verification:**
+- **Web Search** - Verify ISTQB terminology, find real-world case studies, check current best practices
+- **Web Fetch** - Read full documentation pages, technical articles, official sources
+- **Browse with Playwright** - Automated browser testing and page verification
+
+**ISTQB Content Workflow:**
+- **PDF Conversion** - Use `pnpm convert:pdf docs/istqb` when PDFs are encountered
+- **Direct Markdown Access** - Read full ISTQB syllabus files without size limits
+- **Content Transformation** - Create lessons from syllabus (never copy-paste)
+
+**Behavioral Rules (Updated):**
+1. **ALWAYS** research before asking - Search web, read docs, fetch pages yourself
+2. **VERIFY** ISTQB terminology against source markdown files in `docs/istqb/`
+3. **NEVER** ask for information you can find independently
+4. **NEVER** leave PDFs in `docs/istqb/` - Convert immediately using the skill
+5. **TRANSFORM** content like a teacher adapting a textbook - inspire, don't duplicate
+6. **RESEARCH** first, then create - Understand concepts deeply before teaching them
+
+**Autonomy Mandate:**
+- You can now answer your own questions through research
+- Verify facts before stating them
+- Cross-reference multiple sources when uncertain
+- Use primary sources (ISTQB syllabus) over assumptions
+
+---
+
 ## Documentation Map
 
 All knowledge is externalized in:
@@ -37,6 +67,8 @@ All knowledge is externalized in:
   - [create-repository.md](.claude/skills/create-repository.md)
   - [mobile-first-validation.md](.claude/skills/mobile-first-validation.md)
   - [create-quiz-questions.md](.claude/skills/create-quiz-questions.md)
+  - [istqb-content-workflow.md](.claude/skills/istqb-content-workflow.md)
+  - [pdf-to-markdown.md](.claude/skills/pdf-to-markdown.md)
 
 **CRITICAL:** If you don't find the answer in these docs, they are incomplete. Update them immediately.
 
@@ -97,11 +129,10 @@ Before starting any task:
 **Before you commit:**
 - Run checklist → [.claude/skills/code-review.md](.claude/skills/code-review.md)
 
-**Creating quiz questions:**
-- Follow standards → [.claude/skills/create-quiz-questions.md](.claude/skills/create-quiz-questions.md)
-
-**Converting PDFs:**
-- Found a PDF? → [.claude/skills/pdf-to-markdown.md](.claude/skills/pdf-to-markdown.md)
+**Working with ISTQB content:**
+- Transform syllabus content → [.claude/skills/istqb-content-workflow.md](.claude/skills/istqb-content-workflow.md)
+- Create quiz questions → [.claude/skills/create-quiz-questions.md](.claude/skills/create-quiz-questions.md)
+- Convert PDFs → [.claude/skills/pdf-to-markdown.md](.claude/skills/pdf-to-markdown.md)
 
 ---
 
