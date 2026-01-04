@@ -2,6 +2,78 @@ import { MarkItDown } from 'markitdown-ts';
 import { readdir, unlink, writeFile, access } from 'node:fs/promises';
 import { join, parse } from 'node:path';
 
+interface PdfMetadata {
+  title: string;
+  source: string;
+  version: string;
+}
+
+function extractMetadataFromFilename(filename: string): PdfMetadata {
+  // ISTQB_CTFL_Syllabus_v4.0.1.pdf → title: "ISTQB CTFL Syllabus", version: "4.0.1"
+  // ISTQB_CTFL_v4.0_Sample-Exam-A-Questions_v1.7.pdf → title: "Sample Exam A Questions", version: "1.7"
+
+  const match = filename.match(/ISTQB_CTFL(?:_Syllabus)?_v?(\d+\.\d+(?:\.\d+)?)_?(.+)?_v(\d+\.\d+(?:\.\d+)?)/);
+
+  if (match) {
+    const [, , titlePart, version] = match;
+    const title = titlePart
+      ? titlePart.replace(/-/g, ' ').replace(/_/g, ' ')
+      : 'ISTQB CTFL Syllabus';
+    return {
+      title,
+      source: filename,
+      version,
+    };
+  }
+
+  // Fallback for simple filenames
+  return {
+    title: filename.replace(/\.pdf$/i, '').replace(/[-_]/g, ' '),
+    source: filename,
+    version: 'unknown',
+  };
+}
+
+function createFrontmatter(metadata: PdfMetadata): string {
+  return `---
+title: "${metadata.title}"
+source: "${metadata.source}"
+version: "${metadata.version}"
+converted: "${new Date().toISOString().split('T')[0]}"
+---
+
+`;
+}
+
+function cleanMarkdown(rawMarkdown: string): string {
+  let cleaned = rawMarkdown;
+
+  // Remove excessive blank lines (3+ consecutive → 2)
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+
+  // Fix common artifacts from PDF extraction
+  cleaned = cleaned.replace(/\f/g, ''); // Form feed characters
+  cleaned = cleaned.replace(/\u00A0/g, ' '); // Non-breaking spaces
+
+  // Normalize list formatting
+  cleaned = cleaned.replace(/^[\s]*[-*]\s+/gm, '- '); // Unordered lists
+  cleaned = cleaned.replace(/^[\s]*(\d+)\.\s+/gm, '$1. '); // Ordered lists
+
+  // Ensure proper spacing around headers
+  cleaned = cleaned.replace(/^(#{1,6}\s+.+)$/gm, '\n$1\n');
+
+  // Trim trailing whitespace per line
+  cleaned = cleaned
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .join('\n');
+
+  // Ensure file ends with single newline
+  cleaned = cleaned.trim() + '\n';
+
+  return cleaned;
+}
+
 interface ConversionResult {
   inputPath: string;
   outputPath: string;
@@ -23,8 +95,13 @@ async function convertPdfToMarkdown(
       throw new Error('Conversion returned null result');
     }
 
-    // Placeholder - will add post-processing in next task
-    await writeFile(outputPath, result.markdown, 'utf-8');
+    const { name: filename } = parse(pdfPath);
+    const metadata = extractMetadataFromFilename(`${filename}.pdf`);
+    const frontmatter = createFrontmatter(metadata);
+    const cleanedMarkdown = cleanMarkdown(result.markdown);
+    const finalContent = frontmatter + cleanedMarkdown;
+
+    await writeFile(outputPath, finalContent, 'utf-8');
 
     // Verify file was written before deleting PDF
     await access(outputPath);
