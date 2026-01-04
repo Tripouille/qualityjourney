@@ -9,16 +9,25 @@ interface PdfMetadata {
 }
 
 function extractMetadataFromFilename(filename: string): PdfMetadata {
-  // ISTQB_CTFL_Syllabus_v4.0.1.pdf → title: "ISTQB CTFL Syllabus", version: "4.0.1"
-  // ISTQB_CTFL_v4.0_Sample-Exam-A-Questions_v1.7.pdf → title: "Sample Exam A Questions", version: "1.7"
+  // Pattern 1: Syllabus format (one version)
+  // ISTQB_CTFL_Syllabus_v4.0.1.pdf
+  const syllabusMatch = filename.match(/ISTQB_CTFL_Syllabus_v(\d+\.\d+(?:\.\d+)?)/);
 
-  const match = filename.match(/ISTQB_CTFL(?:_Syllabus)?_v?(\d+\.\d+(?:\.\d+)?)_?(.+)?_v(\d+\.\d+(?:\.\d+)?)/);
+  if (syllabusMatch) {
+    return {
+      title: 'ISTQB CTFL Syllabus',
+      source: filename,
+      version: syllabusMatch[1],
+    };
+  }
 
-  if (match) {
-    const [, , titlePart, version] = match;
-    const title = titlePart
-      ? titlePart.replace(/-/g, ' ').replace(/_/g, ' ')
-      : 'ISTQB CTFL Syllabus';
+  // Pattern 2: Exam format (two versions, use the second one)
+  // ISTQB_CTFL_v4.0_Sample-Exam-A-Questions_v1.7.pdf
+  const examMatch = filename.match(/ISTQB_CTFL_v(\d+\.\d+(?:\.\d+)?)_(.+)_v(\d+\.\d+(?:\.\d+)?)/);
+
+  if (examMatch) {
+    const [, , titlePart, version] = examMatch;
+    const title = titlePart.replace(/-/g, ' ').replace(/_/g, ' ');
     return {
       title,
       source: filename,
@@ -55,9 +64,11 @@ function cleanMarkdown(rawMarkdown: string): string {
   cleaned = cleaned.replace(/\f/g, ''); // Form feed characters
   cleaned = cleaned.replace(/\u00A0/g, ' '); // Non-breaking spaces
 
-  // Normalize list formatting
-  cleaned = cleaned.replace(/^[\s]*[-*]\s+/gm, '- '); // Unordered lists
-  cleaned = cleaned.replace(/^[\s]*(\d+)\.\s+/gm, '$1. '); // Ordered lists
+  // Normalize list formatting - preserve indentation for nesting
+  // Only fix lines with 0 or excessive (8+) spaces before list markers
+  cleaned = cleaned.replace(/^([-*])\s+/gm, '$1 '); // Unordered lists at root level
+  cleaned = cleaned.replace(/^[\s]{8,}([-*])\s+/gm, '  $1 '); // Reduce excessive indentation to 2 spaces
+  cleaned = cleaned.replace(/^(\d+)\.\s+/gm, '$1. '); // Ordered lists
 
   // Ensure proper spacing around headers
   cleaned = cleaned.replace(/^(#{1,6}\s+.+)$/gm, '\n$1\n');
