@@ -19,7 +19,8 @@
       "Bash(pnpm remove eslint-plugin-tailwindcss)",
       "Skill(superpowers:writing-plans)",
       "Skill(superpowers:writing-plans:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": [
