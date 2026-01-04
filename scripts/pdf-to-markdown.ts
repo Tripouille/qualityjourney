@@ -11,9 +11,10 @@ interface PdfMetadata {
 function extractMetadataFromFilename(filename: string): PdfMetadata {
   // Pattern 1: Syllabus format (one version)
   // ISTQB_CTFL_Syllabus_v4.0.1.pdf
-  const syllabusMatch = filename.match(/ISTQB_CTFL_Syllabus_v(\d+\.\d+(?:\.\d+)?)/);
+  // Safe regex: Using alternation instead of optional groups to prevent ReDoS
+  const syllabusMatch = /ISTQB_CTFL_Syllabus_v(\d+\.\d+\.\d+|\d+\.\d+)/.exec(filename);
 
-  if (syllabusMatch) {
+  if (syllabusMatch?.[1] !== undefined) {
     return {
       title: 'ISTQB CTFL Syllabus',
       source: filename,
@@ -23,9 +24,10 @@ function extractMetadataFromFilename(filename: string): PdfMetadata {
 
   // Pattern 2: Exam format (two versions, use the second one)
   // ISTQB_CTFL_v4.0_Sample-Exam-A-Questions_v1.7.pdf
-  const examMatch = filename.match(/ISTQB_CTFL_v(\d+\.\d+(?:\.\d+)?)_(.+)_v(\d+\.\d+(?:\.\d+)?)/);
+  // Safe regex: Using limited repetition and negated character classes to prevent catastrophic backtracking
+  const examMatch = /ISTQB_CTFL_v(\d+\.\d+\.\d+|\d+\.\d+)_([A-Za-z0-9_-]+)_v(\d+\.\d+\.\d+|\d+\.\d+)/.exec(filename);
 
-  if (examMatch) {
+  if (examMatch?.[2] !== undefined && examMatch[3] !== undefined) {
     const [, , titlePart, version] = examMatch;
     const title = titlePart.replace(/-/g, ' ').replace(/_/g, ' ');
     return {
@@ -80,7 +82,7 @@ function cleanMarkdown(rawMarkdown: string): string {
     .join('\n');
 
   // Ensure file ends with single newline
-  cleaned = cleaned.trim() + '\n';
+  cleaned = `${cleaned.trim()}\n`;
 
   return cleaned;
 }
@@ -132,10 +134,10 @@ async function convertPdfToMarkdown(
 }
 
 async function main(): Promise<void> {
-  const targetDir = process.argv[2] || 'docs/istqb';
+  const targetDirectory = process.argv[2] ?? 'docs/istqb';
 
   try {
-    const entries = await readdir(targetDir, {
+    const entries = await readdir(targetDirectory, {
       recursive: true,
       withFileTypes: true,
     });
@@ -145,7 +147,7 @@ async function main(): Promise<void> {
       .map((entry) => join(entry.parentPath, entry.name));
 
     if (pdfFiles.length === 0) {
-      console.log(`No PDF files found in ${targetDir}`);
+      console.log(`No PDF files found in ${targetDirectory}`);
       return;
     }
 
@@ -174,4 +176,4 @@ async function main(): Promise<void> {
   }
 }
 
-main();
+void main();
