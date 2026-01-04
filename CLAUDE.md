@@ -83,6 +83,7 @@ Before starting any task:
 6. **NEVER** use Windows CMD commands in bash → Use Unix commands only
 7. **NEVER** redirect to `nul` → Use `/dev/null`
 8. **ALWAYS** update documentation after architectural changes
+9. **NEVER** commit PDFs to `docs/` → Run `pnpm convert:pdf docs/istqb` immediately
 
 ---
 
@@ -98,6 +99,9 @@ Before starting any task:
 
 **Creating quiz questions:**
 - Follow standards → [.claude/skills/create-quiz-questions.md](.claude/skills/create-quiz-questions.md)
+
+**Converting PDFs:**
+- Found a PDF? → [.claude/skills/pdf-to-markdown.md](.claude/skills/pdf-to-markdown.md)
 
 ---
 
