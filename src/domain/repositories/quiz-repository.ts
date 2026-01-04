@@ -1,43 +1,42 @@
 /**
  * Quiz Repository Interface
- * Defines contract for quiz data access
+ * Defines contract for quiz question data access
+ *
+ * Updated for Learning Objective-based architecture
+ * - QuizAttempt tracking moved to ProgressRepository
+ * - Quiz questions are now associated with Learning Objectives
  */
 
-import type { Quiz, QuizAttempt } from '@/domain/entities/quiz';
+import type { QuizQuestion } from '@/domain/entities/quiz';
 
 export interface QuizRepository {
   /**
-   * Find a quiz by its ID
+   * Find all quiz questions for a Learning Objective
    */
-  findById(id: string): Promise<Quiz | null>;
+  findByLearningObjectiveId(learningObjectiveId: string): Promise<QuizQuestion[]>;
 
   /**
-   * Find a quiz by lesson ID
+   * Find a specific quiz question by ID
    */
-  findByLessonId(lessonId: string): Promise<Quiz | null>;
+  findById(id: string): Promise<QuizQuestion | null>;
 
   /**
-   * Create a new quiz
+   * Create a new quiz question
    */
-  create(quiz: Omit<Quiz, 'id' | 'createdAt' | 'updatedAt'>): Promise<Quiz>;
+  create(question: Omit<QuizQuestion, 'id' | 'createdAt' | 'updatedAt'>): Promise<QuizQuestion>;
 
   /**
-   * Update an existing quiz
+   * Update an existing quiz question
    */
-  update(id: string, data: Partial<Quiz>): Promise<Quiz>;
+  update(id: string, data: Partial<QuizQuestion>): Promise<QuizQuestion>;
 
   /**
-   * Delete a quiz
+   * Delete a quiz question
    */
   delete(id: string): Promise<void>;
 
   /**
-   * Save a quiz attempt result
+   * Get all questions for a course (for content management)
    */
-  saveAttempt(attempt: Omit<QuizAttempt, 'id'>): Promise<QuizAttempt>;
-
-  /**
-   * Get quiz attempts for a user
-   */
-  getAttemptsByUser(userId: string, quizId?: string): Promise<QuizAttempt[]>;
+  findByCourseId(courseId: string): Promise<QuizQuestion[]>;
 }

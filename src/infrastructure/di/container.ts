@@ -8,13 +8,13 @@
  */
 
 import type { CourseRepository } from "@/domain/repositories/course-repository";
-import type { QuizRepository } from "@/domain/repositories/quiz-repository";
+// import type { QuizRepository } from "@/domain/repositories/quiz-repository"; // Disabled - using new architecture
 // import { UserRepository } from '@/domain/repositories/user-repository';
 // import { CertificateRepository } from '@/domain/repositories/certificate-repository';
 // import { ProgressRepository } from '@/domain/repositories/progress-repository';
 
 import { CourseRepositoryInMemory } from "@/infrastructure/repositories/in-memory/course-repository-in-memory";
-import { QuizRepositoryInMemory } from "@/infrastructure/repositories/in-memory/quiz-repository-in-memory";
+// import { QuizRepositoryInMemory } from "@/infrastructure/repositories/in-memory/quiz-repository-in-memory"; // Disabled - using new architecture
 // import { UserRepositoryInMemory } from '@/infrastructure/repositories/in-memory/user-repository-in-memory';
 // import { CertificateRepositoryInMemory } from '@/infrastructure/repositories/in-memory/certificate-repository-in-memory';
 // import { ProgressRepositoryInMemory } from '@/infrastructure/repositories/in-memory/progress-repository-in-memory';
@@ -28,7 +28,7 @@ class DependencyContainer {
 
   // Repository instances
   public readonly courseRepository: CourseRepository;
-  public readonly quizRepository: QuizRepository;
+  // public readonly quizRepository: QuizRepository; // Disabled - using new architecture
   // public readonly userRepository: UserRepository;
   // public readonly certificateRepository: CertificateRepository;
   // public readonly progressRepository: ProgressRepository;
@@ -36,7 +36,7 @@ class DependencyContainer {
   private constructor() {
     // Current: In-Memory implementations
     this.courseRepository = new CourseRepositoryInMemory();
-    this.quizRepository = new QuizRepositoryInMemory();
+    // this.quizRepository = new QuizRepositoryInMemory(); // Disabled - using new architecture
     // this.userRepository = new UserRepositoryInMemory();
     // this.certificateRepository = new CertificateRepositoryInMemory();
     // this.progressRepository = new ProgressRepositoryInMemory();

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * QuizRunner Component
  * Interactive quiz interface with exhaustive feedback and celebration

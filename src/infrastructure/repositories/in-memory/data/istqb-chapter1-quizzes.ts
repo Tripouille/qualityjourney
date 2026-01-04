@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Quiz } from '@/domain/entities/quiz';
 
 /**

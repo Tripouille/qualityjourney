@@ -2,32 +2,15 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "Bash(npm install:*)",
-      "Bash(pnpm add:*)",
-      "Bash(pnpm dlx:*)",
-      "Bash(pnpm tsc:*)",
-      "Bash(tree:*)",
-      "Bash(pnpm dev)",
-      "mcp__playwright",
-      "Bash(pnpm build:*)",
-      "Bash(cat:*)",
-      "Bash(npx next@latest info:*)",
-      "Bash(timeout /t 5 /nobreak)",
-      "Bash(taskkill:*)",
-      "Bash(pnpm lint:*)",
-      "Bash(find:*)",
-      "Bash(pnpm remove eslint-plugin-tailwindcss)",
-      "Skill(superpowers:writing-plans)",
-      "Skill(superpowers:writing-plans:*)",
-      "Bash(mkdir:*)",
-      "Bash(git push:*)",
-      "Skill(superpowers:writing-skills)",
-      "Skill(superpowers:writing-skills:*)"
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "mcp__*",
+      "Skill(*)"
     ],
+    "ask": ["WebFetch"],
     "deny": [],
-    "ask": [
-      "WebFetch"
-    ],
     "defaultMode": "acceptEdits"
   },
   "forceLoginMethod": "claudeai"

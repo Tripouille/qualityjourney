@@ -1,19 +1,21 @@
-import type { CourseProgress, ActivityDay } from '@/domain/entities/progress';
+import type { UserProgress, ActivityDay } from '@/domain/entities/progress';
 
 /**
  * Progress Repository Interface
  * Defines the contract for progress tracking data access
+ *
+ * Updated for Learning Objective-based architecture
  */
 export interface ProgressRepository {
   /**
    * Find course progress for a user
    */
-  findByUserAndCourse(userId: string, courseId: string): Promise<CourseProgress | null>;
+  findByUserAndCourse(userId: string, courseId: string): Promise<UserProgress | null>;
 
   /**
    * Find all course progress for a user
    */
-  findByUserId(userId: string): Promise<CourseProgress[]>;
+  findByUserId(userId: string): Promise<UserProgress[]>;
 
   /**
    * Get activity heatmap data for a user
@@ -23,17 +25,22 @@ export interface ProgressRepository {
   /**
    * Create or update course progress
    */
-  upsert(progress: Omit<CourseProgress, 'id'>): Promise<CourseProgress>;
+  upsert(progress: Omit<UserProgress, 'id'>): Promise<UserProgress>;
 
   /**
-   * Mark a lesson as completed
+   * Mark a Learning Objective content as visited
    */
-  markLessonCompleted(userId: string, courseId: string, lessonId: string): Promise<void>;
+  markLearningObjectiveVisited(userId: string, courseId: string, learningObjectiveId: string): Promise<void>;
 
   /**
-   * Update time spent on a lesson
+   * Mark a Learning Objective quiz as passed
    */
-  updateTimeSpent(userId: string, courseId: string, lessonId: string, seconds: number): Promise<void>;
+  markLearningObjectivePassed(userId: string, courseId: string, learningObjectiveId: string): Promise<void>;
+
+  /**
+   * Update time spent on a Learning Objective
+   */
+  updateTimeSpent(userId: string, courseId: string, learningObjectiveId: string, seconds: number): Promise<void>;
 
   /**
    * Delete progress (unenroll from course)

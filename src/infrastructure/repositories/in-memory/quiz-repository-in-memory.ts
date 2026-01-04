@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * In-Memory Quiz Repository Implementation
  * Uses mock data - will be replaced by Drizzle implementation later

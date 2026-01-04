@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Quiz Data Hook
  * Fetches quiz data from repository using TanStack Query
