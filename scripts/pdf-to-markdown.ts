@@ -1,5 +1,5 @@
 import { MarkItDown } from 'markitdown-ts';
-import { readdir, unlink, writeFile } from 'node:fs/promises';
+import { readdir, unlink, writeFile, access } from 'node:fs/promises';
 import { join, parse } from 'node:path';
 
 interface ConversionResult {
@@ -17,18 +17,23 @@ async function convertPdfToMarkdown(
 
   try {
     const markitdown = new MarkItDown();
-    const markdown = await markitdown.convert(pdfPath);
+    const result = await markitdown.convert(pdfPath);
+
+    if (!result) {
+      throw new Error('Conversion returned null result');
+    }
 
     // Placeholder - will add post-processing in next task
-    await writeFile(outputPath, markdown, 'utf-8');
+    await writeFile(outputPath, result.markdown, 'utf-8');
 
-    // Delete original PDF
+    // Verify file was written before deleting PDF
+    await access(outputPath);
     await unlink(pdfPath);
 
     return { inputPath: pdfPath, outputPath, success: true };
-  } catch (error) {
+  } catch (error: unknown) {
     const errorMessage =
-      error instanceof Error ? error.message : String(error);
+      error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       inputPath: pdfPath,
       outputPath,
@@ -38,7 +43,7 @@ async function convertPdfToMarkdown(
   }
 }
 
-async function main() {
+async function main(): Promise<void> {
   const targetDir = process.argv[2] || 'docs/istqb';
 
   try {
